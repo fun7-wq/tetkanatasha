@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Психологическое досье: Наташа</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Nunito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Nunito', 'serif'],
+                    },
+                    colors: {
+                        toxic: '#39ff14',
+                        neonPink: '#ff007f',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 70%);
+            background-attachment: fixed;
+        }
+        
+        .glitch-effect:hover {
+            animation: glitch 0.2s linear infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .toxic-shadow {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+        }
+        
+        .pink-shadow {
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff007f; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e60073; 
+        }
+
+        .wasp-animation {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .wasp-animation:hover {
+            transform: translate(10px, -10px) rotate(15deg) scale(1.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <!-- Header / Profile Section -->
+    <header class="max-w-3xl mx-auto pt-10 px-4 text-center">
+        <div class="relative inline-block">
+            <img src="https://i.imgur.com/0PsigMX.jpeg" alt="Наташа" onerror="this.src='https://via.placeholder.com/150/1e293b/ff007f?text=N'" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-neonPink pink-shadow mx-auto z-10 relative transition-transform duration-500 hover:scale-105">
+            <div class="absolute -bottom-2 -right-2 bg-toxic text-black text-xs font-bold px-2 py-1 rounded-full z-20 toxic-shadow border-2 border-darkBg cursor-help" title="Официальный диагноз">
+                1000% ТОКСИК
+            </div>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-extrabold mt-6 mb-2 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-neonPink to-toxic">
+            Наталья Викторовна
+        </h1>
+        <p class="text-gray-400 font-serif italic text-lg">«Наташа-радость-ваша» | «Ориджинал майде ин Раша»</p>
+        
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+            <span class="bg-gray-800 border border-gray-700 text-xs px-3 py-1 rounded-full"><i class="fas fa-gemini text-toxic mr-1"></i> Близнецы (диагноз)</span>
+            <span class="bg-gray-800 border border-gray-700 text-xs px-3 py-1 rounded-full"><i class="fas fa-map-marker-alt text-neonPink mr-1"></i> Суровые пещеры Перми</span>
+            <span class="bg-gray-800 border border-gray-700 text-xs px-3 py-1 rounded-full"><i class="fas fa-birthday-cake text-purple-400 mr-1"></i> 30 с хвостиком (в душе 15/бабка)</span>
+        </div>
+
+        <!-- Toxicity Meter -->
+        <div class="mt-8 bg-cardBg rounded-xl p-4 border border-gray-800 max-w-md mx-auto relative overflow-hidden">
+            <div class="flex justify-between text-sm mb-2 font-bold uppercase tracking-wider">
+                <span class="text-gray-400">Уровень токсичности</span>
+                <span id="toxicity-value" class="text-toxic drop-shadow-[0_0_5px_rgba(57,255,20,0.8)]">0%</span>
+            </div>
+            <div class="w-full bg-gray-900 rounded-full h-3">
+                <div id="toxicity-bar" class="bg-gradient-to-r from-green-500 via-yellow-500 to-toxic h-3 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-3xl mx-auto mt-8 px-4">
+        <div class="flex overflow-x-auto hide-scrollbar space-x-2 pb-2 justify-start md:justify-center border-b border-gray-800">
+            <button onclick="switchTab('tab-clinical')" id="btn-tab-clinical" class="tab-btn active px-4 py-2 rounded-t-lg font-semibold text-sm transition-colors bg-neonPink text-white whitespace-nowrap">Клиническая картина</button>
+            <button onclick="switchTab('tab-toxicity')" id="btn-tab-toxicity" class="tab-btn px-4 py-2 rounded-t-lg font-semibold text-sm text-gray-400 hover:text-white transition-colors whitespace-nowrap">Токсичность 1000%</button>
+            <button onclick="switchTab('tab-trauma')" id="btn-tab-trauma" class="tab-btn px-4 py-2 rounded-t-lg font-semibold text-sm text-gray-400 hover:text-white transition-colors whitespace-nowrap">Травма "Осы"</button>
+            <button onclick="switchTab('tab-history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-t-lg font-semibold text-sm text-gray-400 hover:text-white transition-colors whitespace-nowrap">Анамнез & Привычки</button>
+            <button onclick="switchTab('tab-conclusion')" id="btn-tab-conclusion" class="tab-btn px-4 py-2 rounded-t-lg font-semibold text-sm text-gray-400 hover:text-white transition-colors whitespace-nowrap">Эпикриз</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-3xl mx-auto mt-6 px-4">
+        
+        <!-- Tab 1: Клиническая картина -->
+        <div id="tab-clinical" class="tab-content active space-y-4">
+            
+            <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-neonPink transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-neonPink opacity-10 rounded-bl-full group-hover:scale-150 transition-transform"></div>
+                <div class="flex items-start">
+                    <div class="text-3xl text-neonPink mr-4 mt-1"><i class="fas fa-yin-yang"></i></div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Синдром «Я нитакая»</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">Страдает тяжелой формой самообмана, агрессивно убеждая окружающих, что она «монашка», «нежное создание» и «одуванчик». В реальности лексикон переполнен древнегреческим матом и шутками про БДСМ.</p>
+                        <blockquote class="mt-3 border-l-4 border-neonPink pl-3 italic text-gray-400 text-sm font-serif">
+                            «Заипися пахнет пися, но на то она и пися, шобы пахла заипися.»
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-toxic transition-colors relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-toxic opacity-10 rounded-bl-full group-hover:scale-150 transition-transform"></div>
+                <div class="flex items-start">
+                    <div class="text-3xl text-toxic mr-4 mt-1"><i class="fas fa-gavel"></i></div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Комплекс виртуального вахтёра</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">Дорвавшись до власти админа, установила в чате диктатуру. Допрос новичков с пристрастием. Бан-машина работает без сбоев: «Бан Неприличная», «Бан 3 года». Обожает «поднасрать обидчику» и через пять минут забыть за что.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700">
+                    <div class="text-2xl text-purple-400 mb-3"><i class="fas fa-masks-theater"></i></div>
+                    <h3 class="font-bold mb-1">Биполярочка и ПМС</h3>
+                    <p class="text-gray-400 text-sm">«Врожденный ПМС с редкими проблесками добра». Ночью рыдает под Мурата Насырова, а затем устраивает танцы на голове.</p>
+                </div>
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700">
+                    <div class="text-2xl text-yellow-400 mb-3"><i class="fas fa-star-and-crescent"></i></div>
+                    <h3 class="font-bold mb-1">Астрологическая шиза</h3>
+                    <p class="text-gray-400 text-sm">Классифицирует людей по знакам зодиака. Свято верит в «Гороскоп Бермуд» и 1000% токсичности Близнецов.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Травма "Осы" -->
+        <div id="tab-trauma" class="tab-content">
+            <div class="bg-gradient-to-b from-cardBg to-gray-900 rounded-2xl p-6 border border-yellow-600 relative">
+                <div class="absolute -top-4 -right-2 text-4xl text-yellow-500 wasp-animation">
+                    <i class="fas fa-bug"></i>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-yellow-500 mb-4 border-b border-gray-700 pb-2">Инцидент: «Бабушка и осы»</h2>
+                <p class="text-gray-300 mb-4 text-sm md:text-base leading-relaxed">
+                    Корень 1000-процентной токсичности пациентки кроется в детстве (возраст 7-8 лет). Уральский лес. Грибы. Рухнувшее дерево с осиным ульем.
+                </p>
+                
+                <div class="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-yellow-500 before:to-transparent">
+                    
+                    <!-- Timeline Item 1 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-darkBg bg-yellow-500 text-black shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                            <i class="fas fa-running text-sm"></i>
+                        </div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl bg-gray-800 border border-gray-700">
+                            <h4 class="font-bold text-yellow-400 mb-1">Режим турбо-спринтера</h4>
+                            <p class="text-xs text-gray-300">Паника, бег "куда глаза глядят". В процессе потеряна сандалия, которую беспощадно засосало в грязь. Финиш: эпичный бросок в кусты.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-darkBg bg-red-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                            <i class="fas fa-bullhorn text-sm"></i>
+                        </div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl bg-gray-800 border border-gray-700">
+                            <h4 class="font-bold text-red-400 mb-1">Поддержка бабушки</h4>
+                            <p class="text-xs text-gray-300">Вместо спасения бабушка просто стояла и кричала: «Наташа, остановись!». Гениальная тактика, позволившая осам доесть ребенка с комфортом.</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-darkBg bg-toxic text-black shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                            <i class="fas fa-brain text-sm"></i>
+                        </div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl bg-gray-800 border border-gray-700">
+                            <h4 class="font-bold text-toxic mb-1">Последствия</h4>
+                            <p class="text-xs text-gray-300">Ненависть к природе, паническая боязнь коров, коз и "петухов ебанько". Формирование синдрома контролера и манеры обещать всех "отпиздить палкой" как гиперкомпенсация.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Анамнез и Привычки -->
+        <div id="tab-history" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Music Past -->
+                <div class="bg-cardBg p-5 rounded-2xl border border-gray-700 flex flex-col items-center text-center">
+                    <img src="https://media.giphy.com/media/gui67fZ3xIneM/giphy.gif" alt="Rock" class="w-full h-32 object-cover rounded-lg mb-4 opacity-70">
+                    <h3 class="font-bold text-lg mb-2"><i class="fas fa-guitar text-gray-400 mr-2"></i>Темное прошлое</h3>
+                    <p class="text-sm text-gray-400">В юности — суровая рокерша-металлистка в черном плаще с цепями. Слушала Slipknot и «КиШ». Теперь считает, что эти грехи нужно отмаливать.</p>
+                </div>
+                
+                <!-- Food -->
+                <div class="bg-cardBg p-5 rounded-2xl border border-gray-700 flex flex-col justify-center">
+                    <h3 class="font-bold text-lg mb-3 border-b border-gray-700 pb-2"><i class="fas fa-utensils text-orange-400 mr-2"></i>Кулинария</h3>
+                    <ul class="text-sm text-gray-300 space-y-2">
+                        <li><i class="fas fa-times text-red-500 w-5"></i> Ненавидит рыбу и сладкое</li>
+                        <li><i class="fas fa-check text-green-500 w-5"></i> Обожает соленые корнишоны</li>
+                        <li><i class="fas fa-glass-whiskey text-yellow-600 w-5"></i> Предпочитает виски с колой</li>
+                    </ul>
+                </div>
+
+                <!-- Family & Love -->
+                <div class="bg-cardBg p-5 rounded-2xl border border-gray-700 md:col-span-2 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 text-9xl text-gray-800 opacity-50"><i class="fas fa-heart-broken"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-neonPink relative z-10">Семья и Любовь</h3>
+                    <p class="text-sm text-gray-300 mb-3 relative z-10">
+                        Воспитывает дочь Ксюшу (которая за главную) и сына-отличника Пашу (гиперопека). В любви склонна к фанатизму, готова "тонуть в человеке" и становиться прилипалой.
+                    </p>
+                    <div class="bg-gray-900 p-3 rounded-lg border-l-4 border-neonPink relative z-10">
+                        <p class="text-sm font-serif italic text-gray-400">Вынесенная мудрость после развода:</p>
+                        <p class="font-bold text-white mt-1">«Алёша — это не имя, это диагноз!»</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Токсичность 1000% -->
+        <div id="tab-toxicity" class="tab-content space-y-4">
+            <h2 class="text-2xl font-bold text-toxic mb-4 border-b border-gray-700 pb-2">Проявления 1000% токсичности</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-toxic transition-colors">
+                    <h3 class="font-bold mb-2 text-neonPink">1. Агрессивная доброта</h3>
+                    <p class="text-gray-300 text-sm">Прикрывается маской: «Я добрая жи», «я одуванчик». Но доброта специфична — в одном предложении может написать: <span class="italic text-gray-400">«Я добрая дурень слепошарый»</span>.</p>
+                </div>
+                
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-toxic transition-colors">
+                    <h3 class="font-bold mb-2 text-neonPink">2. Бан-машина</h3>
+                    <p class="text-gray-300 text-sm">Любимые приговоры: «Бан 5 лет», «Бан Неприличная», «Бан Хуйня какая-то». Раздавать баны «ебанашкам» — любимый вид спорта.</p>
+                </div>
+
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-toxic transition-colors">
+                    <h3 class="font-bold mb-2 text-neonPink">3. Мстительность с амнезией</h3>
+                    <p class="text-gray-300 text-sm">Методика: <span class="italic text-gray-400">«Поднасрать люблю обидчику... А потом отошла и забыла шо хотела»</span>. Идеальное преступление — испортить жизнь и не вспомнить за что.</p>
+                </div>
+
+                <div class="bg-cardBg rounded-2xl p-5 border border-gray-700 hover:border-toxic transition-colors">
+                    <h3 class="font-bold mb-2 text-neonPink">4. Словесный БДСМ</h3>
+                    <p class="text-gray-300 text-sm">Ядовитый сарказм во всей красе. Фирменные ответы: <span class="italic text-gray-400">«Не эээкай на меня»</span>, философское <span class="italic text-gray-400">«Соси жопу»</span>. На неправильный гороскоп орет: <span class="italic text-gray-400">«Переделывай»</span>.</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-red-900/40 to-cardBg rounded-2xl p-5 border border-red-800 mt-4">
+                <h3 class="font-bold mb-2 text-red-400"><i class="fas fa-biohazard mr-2"></i>5. Жажда виртуального насилия</h3>
+                <p class="text-gray-300 text-sm leading-relaxed">Лексикон пестрит угрозами: <span class="font-mono text-red-300">«Давай буим бить тебя?»</span>, <span class="font-mono text-red-300">«Пиздить надо всех»</span>, <span class="font-mono text-red-300">«Я б убила всех наверное»</span>, <span class="font-mono text-red-300">«Я те уипу»</span>. За любую провинность готова размазать собеседника по ванной, встать на него и душить проводом или просто поставить «в угол на горох».</p>
+            </div>
+        </div>
+
+        <!-- Tab 5: Заключение -->
+        <div id="tab-conclusion" class="tab-content">
+            <div class="bg-cardBg rounded-2xl p-6 border border-gray-700 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-7xl text-gray-800 opacity-30"><i class="fas fa-file-medical-alt"></i></div>
+                <h2 class="text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2 relative z-10">Эпикриз (Заключение)</h2>
+                <p class="text-gray-300 text-base leading-relaxed mb-4 relative z-10">
+                    Наташа — «характерная картофелина», самопровозглашенная богиня чата, «легкомысленная хрень» и гиперответственная мать в одном флаконе. 
+                </p>
+                <p class="text-gray-300 text-base leading-relaxed mb-4 relative z-10">
+                    За маской агрессивного сарказма, бесконечных смайликов <span class="text-xl">🤣🤣🤣</span> и угроз отхлестать всех палкой скрывается женщина, которая просто приходит в интернет отдохнуть от рутины, почитать чужие перепалки и раздать виртуальных лещей.
+                </p>
+                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 mt-6 relative z-10 toxic-shadow">
+                    <p class="text-toxic font-bold uppercase text-sm mb-3"><i class="fas fa-prescription-bottle-alt mr-2"></i>Рекомендации по выживанию:</p>
+                    <ul class="list-none text-gray-300 text-sm space-y-2">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Вовремя отвечать на ее допросы.</li>
+                        <li><i class="fas fa-skull text-red-500 mr-2"></i>Никогда не трогать ее кошку-психопатку!</li>
+                        <li><i class="fas fa-crown text-yellow-500 mr-2"></i>Не забирать статус «Пися-королевы».</li>
+                        <li><i class="fas fa-heart text-neonPink mr-2"></i>Регулярно говорить ей, что она милая.</li>
+                        <li><i class="fas fa-shoe-prints text-blue-400 mr-2"></i>Пожалеть её за ос и мысленно вернуть сандалию.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating Action Button (Ban simulator) -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="triggerBan()" class="bg-neonPink hover:bg-toxic hover:text-black text-white rounded-full p-4 shadow-lg pink-shadow transition-all duration-300 glitch-effect group flex items-center justify-center w-16 h-16 md:w-auto md:px-6">
+            <i class="fas fa-comment-dots text-2xl md:mr-2"></i>
+            <span class="hidden md:inline font-bold">Написать в чат</span>
+        </button>
+    </div>
+
+    <!-- Modal for "Ban" -->
+    <div id="ban-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border-2 border-red-600 rounded-2xl p-6 max-w-sm w-full text-center transform scale-95 transition-transform duration-300" id="ban-modal-content">
+            <div class="text-red-500 text-6xl mb-4 animate-bounce">
+                <i class="fas fa-ban"></i>
+            </div>
+            <h2 class="text-3xl font-black text-white mb-2 uppercase tracking-widest">ВЫ В БАНЕ!</h2>
+            <p class="text-gray-300 mb-4 text-sm">
+                Вас забанила Наташа. 
+                <br><span class="font-bold text-red-400">Срок: 3 года.</span>
+                <br><span class="italic text-gray-400">Причина: "Хуйня какая-то / Не эээкай на меня"</span>
+            </p>
+            <div class="text-xs text-gray-500 mb-6 border-t border-gray-700 pt-3">
+                Она встанет на вас и будет душить проводом. А потом забудет, за что забанила.
+            </div>
+            <button onclick="closeBanModal()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition-colors">
+                Попросить прощения и выйти
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Animate toxicity meter on load
+        window.onload = () => {
+            setTimeout(() => {
+                const bar = document.getElementById('toxicity-bar');
+                const val = document.getElementById('toxicity-value');
+                
+                bar.style.width = '100%';
+                
+                let currentVal = 0;
+                const interval = setInterval(() => {
+                    currentVal += 20;
+                    if(currentVal >= 1000) {
+                        currentVal = 1000;
+                        clearInterval(interval);
+                    }
+                    val.innerText = currentVal + '%';
+                }, 20); // 1 second total animation approx
+            }, 500);
+        };
+
+        // Tab switching logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Reset button styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-neonPink', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Style active button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-gray-400');
+            activeBtn.classList.add('bg-neonPink', 'text-white');
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('ban-modal');
+        const modalContent = document.getElementById('ban-modal-content');
+
+        function triggerBan() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeBanModal() {
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        // Close modal on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeBanModal();
+            }
+        });
+    </script>
+</body>
+</html>
